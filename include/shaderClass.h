@@ -18,6 +18,7 @@ class Shader
         void Activate();
         void Delete();
         void compileErrors(unsigned int shader, const char* type);
+        void SetInt(const std::string &name, int value);
 };
 
 #endif

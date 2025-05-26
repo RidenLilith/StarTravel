@@ -99,3 +99,8 @@ void Shader::compileErrors(unsigned int shader, const char* type)
 		}
 	}
 }
+
+void Shader::SetInt(const std::string &name, int value)
+{
+    glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+}

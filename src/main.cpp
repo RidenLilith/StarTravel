@@ -15,31 +15,13 @@
 #include "camera.h"
 #include "time.h"
 #include "texture.h"
+#include "window.h"
 
 int width = 800;
 int height = 800;
 
 int main(){
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-    GLFWwindow* window = glfwCreateWindow(width, height, "Janela Teste", NULL, NULL);
-    if (window == NULL) {
-    std::cout << "Falha ao criar a janela GLFW" << std::endl;
-    glfwTerminate();
-    return -1;
-    }   
-    glfwMakeContextCurrent(window);
-    // glViewport(0, 0, 940, 400);
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cout << "Falha ao inicializar GLAD" << std::endl;
-        return -1;
-    }
-
-    // std::cout << planet.indices[0];
-
+    Window window(width, height);
     Shader shaderProgram("shaders/VertexShader.vert", "shaders/PlanetFragShader.frag");
 
     VAO VAO1;
@@ -61,10 +43,9 @@ int main(){
     VAO1.Unbind();
     VBO1.Unbind();
     EBO1.Unbind();
-    
-    GLuint tex0Uni = glGetUniformLocation(shaderProgram.ID, "tex0");
+
     shaderProgram.Activate();
-    glUniform1i(tex0Uni, 0);
+    shaderProgram.SetInt("tex0", 0);
 
     // adiciona profundidade, sobreposição de objetos
     glEnable(GL_DEPTH_TEST);
@@ -72,13 +53,16 @@ int main(){
     Camera camera(width, height, glm::vec3(0.0f, 0.0f, 4.0f));
 
     Time time;
-    planeta.Translate(glm::vec3(-1.0f, 0.0f, 0.0f));
+    planeta.Translate(glm::vec3(-0.5f, 0.0f, 0.0f));
     planeta.Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     moon.Translate(glm::vec3(1.0f, 0.0f, 0.0f));
     moon.Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     moon.Scale(glm::vec3(0.5f, 0.5f, 0.5f));
-    // While principal onde a mágica acontece
-    while (!glfwWindowShouldClose(window)) {
+
+
+
+    // While principal onde a mágica acontece -----------------------------------------
+    while (!glfwWindowShouldClose(window.window)) {
         time.Update();
         // Limpa a tela com cor de fundo e depth buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -96,9 +80,11 @@ int main(){
 
         
         // Troca os buffers e processa eventos
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(window.window);
         glfwPollEvents();
     }
+
+    
 
     VAO1.Delete();
     EBO1.Delete();
