@@ -56,6 +56,7 @@ Skybox::Skybox(const std::vector<std::string>& faces, Shader* skyboxShader)
         -1.0f, -1.0f,  1.0f,
          1.0f, -1.0f,  1.0f
     };
+    vertices = std::vector<float>(std::begin(skyboxVertices), std::end(skyboxVertices));
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);

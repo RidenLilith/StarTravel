@@ -12,7 +12,7 @@ class Skybox {
 public:
     GLuint VAO, VBO, cubemapTexture;
     Shader* shader;
-
+    std::vector<float> vertices;
     Skybox(const std::vector<std::string>& faces, Shader* skyboxShader);
     void Render(const glm::mat4& view, const glm::mat4& projection);
     void Delete();

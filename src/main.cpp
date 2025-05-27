@@ -63,11 +63,16 @@ int main(){
     shaderProgram.Activate();
     shaderProgram.SetInt("tex0", 0);
 
+    VAO VAO2;
+    VAO2.Bind();
+
     Skybox skybox(faces, &skyboxShader);
+    VBO VBO2(skybox.vertices, skybox.vertices.size());
     // adiciona profundidade, sobreposição de objetos
     glEnable(GL_DEPTH_TEST);
 
     Camera camera(width, height, glm::vec3(0.0f, 0.0f, 4.0f));
+    
 
     Time time;
     planeta.Translate(glm::vec3(-0.5f, 0.0f, 0.0f));
@@ -87,6 +92,9 @@ int main(){
 
         // Ativa o shader
         shaderProgram.Activate();
+        // float angle = (float)glfwGetTime(); // tempo em segundos
+        // camera.Orientation = glm::normalize(glm::vec3(sin(angle/10), 0.0f, -cos(angle/10)));
+        camera.Inputs(window.window);
         camera.Matrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
         VAO1.Bind();
         //a cada 1 segundo vc rotaciona x.0f graus. Top demais, né?!!!
