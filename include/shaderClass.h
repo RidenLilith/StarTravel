@@ -5,7 +5,8 @@
 #include <sstream>
 #include <iostream>
 #include <cerrno>
-
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 std::string get_file_contents(const char* filename);
 
@@ -19,6 +20,7 @@ class Shader
         void Delete();
         void compileErrors(unsigned int shader, const char* type);
         void SetInt(const std::string &name, int value);
+        void SetMat4(const std::string &name, const glm::mat4 &mat);
 };
 
 #endif
