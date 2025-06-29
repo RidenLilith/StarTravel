@@ -54,14 +54,17 @@ int main(){
     VBO VBO1(planeta.vertices, planeta.vertices.size() * sizeof(float));
     EBO EBO1(planeta.indices, planeta.indices.size() * sizeof(GLuint));
 
-    VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
-    VAO1.LinkAttrib(VBO1, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*) (3 * sizeof(float)));
+    VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+    VAO1.LinkAttrib(VBO1, 1, 2, GL_FLOAT, 8 * sizeof(float), (void*) (3 * sizeof(float)));
+    VAO1.LinkAttrib(VBO1, 2, 3, GL_FLOAT, 8 * sizeof(float), (void*)(5 * sizeof(float)));
     VAO1.Unbind();
     VBO1.Unbind();
     EBO1.Unbind();
 
     shaderProgram.Activate();
     shaderProgram.SetInt("tex0", 0);
+
+
 
     VAO VAO2;
     VAO2.Bind();
@@ -72,7 +75,10 @@ int main(){
     glEnable(GL_DEPTH_TEST);
 
     Camera camera(width, height, glm::vec3(0.0f, 0.0f, 4.0f));
-    
+
+    shaderProgram.SetVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    shaderProgram.SetVec3("lightPos", glm::vec3(0.0f, 3.0f, 0.0f));
+    shaderProgram.SetVec3("viewPos", camera.Position);
 
     Time time;
     planeta.Translate(glm::vec3(-0.5f, 0.0f, 0.0f));

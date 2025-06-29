@@ -27,13 +27,21 @@ Planet::Planet(int stacks, int sectors, Texture* tex, Shader* sha, GLuint ID)
             float u = (float)j / sectors;
             float v = (float)i / stacks;
 
-            // Posição (x, y, z)
+            // Posição
             vertices.push_back(x);
             vertices.push_back(y);
             vertices.push_back(z);
-            // Coordenadas de UV
+
+            // UV
             vertices.push_back(u);
             vertices.push_back(v);
+
+            // Normal (normalizada)
+            glm::vec3 normal = glm::normalize(glm::vec3(x, y, z));
+            vertices.push_back(normal.x);
+            vertices.push_back(normal.y);
+            vertices.push_back(normal.z);
+
         }
     }
 

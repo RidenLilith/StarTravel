@@ -21,6 +21,8 @@ class Shader
         void compileErrors(unsigned int shader, const char* type);
         void SetInt(const std::string &name, int value);
         void SetMat4(const std::string &name, const glm::mat4 &mat);
+        void SetVec3(const std::string &name, const glm::vec3 &value);
+        void SetVec3(const std::string &name, float x, float y, float z);
 };
 
 #endif
