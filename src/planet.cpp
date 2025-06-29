@@ -67,14 +67,17 @@ Planet::Planet(int stacks, int sectors, Texture* tex, Shader* sha, GLuint ID)
 void Planet::Translate(glm::vec3 offset)
 {
     model = glm::translate(model, offset);
+    position = position + offset;
 }
 void Planet::Rotate(float angle, glm::vec3 axis)
 {
-    model = glm::rotate(model, glm::radians(angle), axis);
+    rotation = glm::rotate(rotation, glm::radians(angle), axis);
 }
+
 void Planet::Scale(glm::vec3 scaleFactor)
 {
-    model = glm::scale(model, scaleFactor);
+    currentScale = scaleFactor;
+    model = glm::scale(model, currentScale);
 }
 
 void Planet::Render()
@@ -87,5 +90,28 @@ void Planet::Render()
     GLuint modelLoc = glGetUniformLocation(shader->ID, "model");
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
+    GLuint emissiveLoc = glGetUniformLocation(shader->ID, "emissiveStrength");
+    glUniform1f(emissiveLoc, emissiveStrength);
+
+    GLuint lightColorLoc = glGetUniformLocation(shader->ID, "lightColor");
+    glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); // branco padrão
+
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+}
+
+void Planet::OrbitAround(glm::vec3 center, float radius, float speed, float deltaTime, float& angle)
+{
+    angle += speed * deltaTime;
+    if (angle > 360.0f) angle -= 360.0f;
+
+    float rad = glm::radians(angle);
+    float x = center.x + radius * cos(rad);
+    float z = center.z + radius * sin(rad);
+    float y = center.y;
+    position = glm::vec3(x, y, z);
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(x, y, z));
+    model = model * rotation; // aplica rotação no próprio eixo
+    model = glm::scale(model, currentScale);
 }
