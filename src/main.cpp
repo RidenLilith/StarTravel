@@ -22,12 +22,12 @@ int width = 800;
 int height = 800;
 
 std::vector<std::string> faces = {
-    "textures/cubemap/space_rt.png",
-    "textures/cubemap/space_lf.png",
-    "textures/cubemap/space_up.png",
-    "textures/cubemap/space_dn.png",
-    "textures/cubemap/space_ft.png",
-    "textures/cubemap/space_bk.png"
+    "textures/cubemap/Stars.jpg",
+    "textures/cubemap/Stars.jpg",
+    "textures/cubemap/Stars.jpg",
+    "textures/cubemap/Stars.jpg",
+    "textures/cubemap/Stars.jpg",
+    "textures/cubemap/Stars.jpg"
 };
 
 int main(){
@@ -45,7 +45,7 @@ int main(){
 
     // Texture -----------------------------------
     
-    Texture planetaTexture("textures/PlanetA.png", GL_TEXTURE0);
+    Texture planetaTexture("textures/Earth.jpg", GL_TEXTURE0);
     Texture moonTexture("textures/Moon.jpg", GL_TEXTURE0);
     Texture sunTex("textures/Sun.jpg", GL_TEXTURE0);
     
