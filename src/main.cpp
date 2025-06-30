@@ -16,7 +16,9 @@
 #include "time.h"
 #include "texture.h"
 #include "window.h"
-#include "skybox.h" 
+#include "skybox.h"
+#include "Bezier.h"
+#include "bezierPath.h"
 
 int width = 800;
 int height = 800;
@@ -30,9 +32,38 @@ std::vector<std::string> faces = {
     "textures/cubemap/Stars.jpg"
 };
 
+
+float bezierTime = 0.0f;
+const float bezierDuration = 20.0f; // duração total para percorrer todas as curvas
+
+
 int main(){
     // criacao da janela
     Window window(width, height);
+
+    
+    BezierPath cameraPath;
+    // Defina os pontos de controle das curvas Bézier (exemplo para 3 segmentos)
+    cameraPath.addSegment(
+        glm::vec3(0.0f, 2.0f, 100.0f), // p0
+        glm::vec3(40.0f, 0.0f, 60.0f), // p1
+        glm::vec3(-40.0f, 0.5f, 2.0f), // p2
+        glm::vec3(0.0f, 0.0f, 0.0f)     // p3 (fim do 1o segmento)
+    );
+
+    cameraPath.addSegment(
+        glm::vec3(0.0f, 0.0f, 0.0f),   // p0 (de onde parou no segmento anterior)
+        glm::vec3(20.0f, 10.0f, -20.0f), // p1
+        glm::vec3(-20.0f, 5.0f, -40.0f), // p2
+        glm::vec3(0.0f, 0.0f, -60.0f)     // p3 (fim do 2o segmento)
+    );
+
+    cameraPath.addSegment(
+        glm::vec3(0.0f, 0.0f, -60.0f), // p0 (início do 3o segmento)
+        glm::vec3(0.0f, 20.0f, -80.0f), // p1
+        glm::vec3(10.0f, 10.0f, -90.0f), // p2
+        glm::vec3(0.0f, 0.0f, -100.0f)   // p3 (final da curva)
+    );
 
     //criacao dos shaders dos planetas e do skybox
     Shader shaderProgram("shaders/VertexShader.vert", "shaders/PlanetFragShader.frag");
@@ -95,6 +126,9 @@ int main(){
     float planetOrbitAngle = 0.0f;
 
 
+    float bezierTime = 0.0f;
+    const float bezierDuration = 10.0f; // segundos que dura o movimento da câmera na curva
+
     // While principal onde a mágica acontece -----------------------------------------
     while (!glfwWindowShouldClose(window.window)) {
         time.Update();
@@ -111,7 +145,17 @@ int main(){
         shaderProgram.SetVec3("viewPos", camera.Position);
         // float angle = (float)glfwGetTime(); // tempo em segundos
         // camera.Orientation = glm::normalize(glm::vec3(sin(angle/10), 0.0f, -cos(angle/10)));
-        camera.Inputs(window.window);
+        if (bezierTime < bezierDuration) {
+            float t = bezierTime / bezierDuration;  // Normaliza 0 a 1 para todo o caminho
+            camera.Position = cameraPath.evaluate(t);
+
+            // Olha para o centro do sistema solar (exemplo)
+            camera.Orientation = glm::normalize(glm::vec3(0.0f) - camera.Position);
+
+            bezierTime += time.deltaTime;
+        } else {
+            camera.Inputs(window.window);  // controle manual liberado depois da curva
+        }
         camera.Matrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
         VAO1.Bind();
         //a cada 1 segundo vc rotaciona x.0f graus. Top demais, né?!!!
