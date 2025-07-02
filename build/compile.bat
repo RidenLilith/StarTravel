@@ -4,7 +4,7 @@
 if not exist build mkdir build
 
 :: Compilação
-g++ src\main.cpp src\glad.c src\VAO.cpp src\VBO.cpp src\ShaderClass.cpp src\EBO.cpp src\planet.cpp src\stb.cpp src\camera.cpp src\time.cpp src\texture.cpp src/window.cpp src/skybox.cpp src/bezier.cpp src/bezierPath.cpp src/cameraController.cpp src/billBoard.cpp -o build\universe.exe -Iinclude -Llib -lglfw3 -lopengl32 -lgdi32
+g++ src\main.cpp src\glad.c src\VAO.cpp src\VBO.cpp src\ShaderClass.cpp src\EBO.cpp src\planet.cpp src\stb.cpp src\camera.cpp src\time.cpp src\texture.cpp src/window.cpp src/skybox.cpp src/bezier.cpp src/bezierPath.cpp src/cameraController.cpp src/billBoard.cpp -o build\universe.exe -Iinclude -Llib -lglfw3 -lopengl32 -lgdi32 -lwinmm
 
 echo Compilado com sucesso!
 build\universe.exe

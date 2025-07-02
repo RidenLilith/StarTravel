@@ -22,6 +22,9 @@
 #include "bezierPath.h"
 #include "billBoard.h"
 #include "cameraController.h"
+#include <windows.h>
+#include <mmsystem.h>
+
 
 
 
@@ -32,6 +35,7 @@ struct PlanetInfo {
 };
 
 int main() {
+    // sf::Music music;
     float fator = 2.0f;
     int width = 1080, height = 1080;
     Window window(width, height);
@@ -234,9 +238,17 @@ int main() {
     float travelTime = 15.0f;
     bool cameraLocked = true;
 
+    PlaySound(TEXT("sounds/interestelar.wav"), NULL, SND_FILENAME | SND_ASYNC);
+    bool finalSoundPlayed = false;
+
     while (!glfwWindowShouldClose(window.window)) {
         time.Update();
         elapsedTime += time.deltaTime;
+        float timeRemaining = pathController.getTotalTime() - elapsedTime;
+        if (!finalSoundPlayed && timeRemaining <= 2.0f) {
+            PlaySound(TEXT("sounds/finalizacao.wav"), NULL, SND_FILENAME | SND_ASYNC);
+            finalSoundPlayed = true;
+        }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
