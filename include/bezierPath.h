@@ -18,7 +18,7 @@ public:
 
     void addSegment(const glm::vec3& p0, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3);
 
-    glm::vec3 evaluate(float t);
+    glm::vec3 evaluate(int segmentIndex, float t);
 
     // Gera pontos para debug visual (ex: para desenhar linhas)
     std::vector<glm::vec3> getDebugPoints(int samplesPerSegment = 100);
