@@ -162,7 +162,7 @@ int main() {
     mercury.Scale(glm::vec3(15.0f*4.0f));           // 0.38 * 40
     venus.Scale(glm::vec3(35.0f*4.0f));             // 0.95 * 40
     earth.Scale(glm::vec3(800.0f));             // referência
-    moon.Scale(glm::vec3(40.0f));              // 0.27 * 40
+    moon.Scale(glm::vec3(200.0f));              // 0.27 * 40
     mars.Scale(glm::vec3(100.0f));              // 0.53 * 40
     jupiter.Scale(glm::vec3(1200.0f));          // 10.97 * 40
     neptune.Scale(glm::vec3(1000.0f));          // 3.88 * 40
@@ -280,11 +280,11 @@ int main() {
         camera.Matrix(45.0f, 0.1f, 70000.0f, shaderProgram, "camMatrix");
 
         // 
-        moon.OrbitAround(earth.position, 6.0f, 300.0f, time.deltaTime, moonAngle);
+        moon.OrbitAround(earth.position, 1500.0f, 50.0f, time.deltaTime, moonAngle);
 
         // 
         sun.Rotate(-3.0f * time.deltaTime, glm::vec3(0, 0, 1));
-        earth.Rotate(-5.0f * time.deltaTime, glm::vec3(0, 0, 1));
+        earth.Rotate(-20.0f * time.deltaTime, glm::vec3(0, 0, 1));
         jupiter.Rotate(-8.0f * time.deltaTime, glm::vec3(0, 0, 1));
         neptune.Rotate(-5.0f * time.deltaTime, glm::vec3(0, 0, 1));
         mercury.Rotate(-4.0f * time.deltaTime, glm::vec3(0, 0, 1));
