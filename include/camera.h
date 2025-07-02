@@ -25,14 +25,16 @@ class Camera
         int width;
         int height;
 
-        float speed = 0.1f;
-        float sensitivity = 1.0f;
+        float speed = 4.0f;
+        float sensitivity = 2.0f;
 
         Camera(int width, int height, glm::vec3 position);
 
         void Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform);
 
         void Inputs(GLFWwindow* window);
+
+        void SmoothLookAt(const glm::vec3& targetDirection, float turnSpeed);
 
 };  
 

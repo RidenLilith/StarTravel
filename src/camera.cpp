@@ -22,19 +22,19 @@ void Camera::Inputs(GLFWwindow* window)
     speed = 0.2f;
     if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        Position += speed * Orientation;
+        Position += (speed*40.0f) * Orientation;
     }
     if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        Position += speed * -glm::normalize(glm::cross(Orientation, Up));
+        Position += (speed*40.0f) * -glm::normalize(glm::cross(Orientation, Up));
     }
     if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        Position += speed * -Orientation;
+        Position += (speed*40.0f) * -Orientation;
     }
     if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        Position += speed * glm::normalize(glm::cross(Orientation, Up));
+        Position += (speed*40.0f) * glm::normalize(glm::cross(Orientation, Up));
     }
     if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
@@ -54,4 +54,27 @@ void Camera::Inputs(GLFWwindow* window)
     {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
+
+    // Novo trecho: imprime posição da câmera quando a barra de espaço é pressionada
+    static bool spaceWasPressed = false;
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        if (!spaceWasPressed)
+        {
+            std::cout << "Camera Position: x=" << Position.x
+                      << ", y=" << Position.y
+                      << ", z=" << Position.z << std::endl;
+            spaceWasPressed = true;
+        }
+    }
+    else
+    {
+        spaceWasPressed = false;
+    }
+}
+
+void Camera::SmoothLookAt(const glm::vec3& targetDirection, float turnSpeed)
+{
+    glm::vec3 normalizedTarget = glm::normalize(targetDirection);
+    Orientation = glm::normalize(glm::mix(Orientation, normalizedTarget, turnSpeed));
 }

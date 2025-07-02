@@ -66,12 +66,23 @@ Planet::Planet(int stacks, int sectors, Texture* tex, Shader* sha, GLuint ID)
 
 void Planet::Translate(glm::vec3 offset)
 {
-    model = glm::translate(model, offset);
-    position = position + offset;
+    position = offset;
+    model = glm::mat4(1.0f); // limpa transformações anteriores
+    model = glm::translate(model, position);
+    model = model * rotation;
+    model = glm::scale(model, currentScale);
 }
+
+
 void Planet::Rotate(float angle, glm::vec3 axis)
 {
     rotation = glm::rotate(rotation, glm::radians(angle), axis);
+
+    // Recalcular model matrix
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, position);
+    model = model * rotation;
+    model = glm::scale(model, currentScale);
 }
 
 void Planet::Scale(glm::vec3 scaleFactor)
@@ -108,10 +119,11 @@ void Planet::OrbitAround(glm::vec3 center, float radius, float speed, float delt
     float x = center.x + radius * cos(rad);
     float z = center.z + radius * sin(rad);
     float y = center.y;
-    position = glm::vec3(x, y, z);
+
+    position = glm::vec3(x, y, z); // sempre atualizar
 
     model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(x, y, z));
-    model = model * rotation; // aplica rotação no próprio eixo
+    model = glm::translate(model, position);
+    model = model * rotation;
     model = glm::scale(model, currentScale);
 }

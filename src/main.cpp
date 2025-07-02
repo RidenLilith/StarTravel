@@ -23,233 +23,246 @@
 #include "asteroidSpawner.h"
 #include "asteroid.h"
 
-#define PI 3.14159265359f
-
-std::vector<glm::vec3> generateAsteroidTunnelPositions(
-    int count, float radius, float zStart, float zEnd, glm::vec3 axis = glm::vec3(0, 0, 1))
-{
-    std::vector<glm::vec3> positions;
-    positions.reserve(count);
-
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> distRadius(0.0f, radius);
-    std::uniform_real_distribution<float> distAngle(0.0f, 2.0f * PI);
-    std::uniform_real_distribution<float> distZ(zEnd, zStart);
-
-    for (int i = 0; i < count; ++i) {
-        float r = distRadius(gen);
-        float angle = distAngle(gen);
-        float z = distZ(gen);
-
-        // Posição circular ao redor do eixo Z
-        float x = r * cos(angle);
-        float y = r * sin(angle);
-
-        glm::vec3 position = glm::vec3(x, y, z);
-        positions.push_back(position);
-    }
-
-    return positions;
-}
-
-float tunnelRadius = 15.0f;
-float tunnelStartZ = 200.0f;
-float tunnelEndZ = 0.0f;
-int asteroidCount = 100;
 
 
-int width = 800;
-int height = 800;
-
-std::vector<std::string> faces = {
-    "textures/cubemap/Stars.jpg",
-    "textures/cubemap/Stars.jpg",
-    "textures/cubemap/Stars.jpg",
-    "textures/cubemap/Stars.jpg",
-    "textures/cubemap/Stars.jpg",
-    "textures/cubemap/Stars.jpg"
+struct PlanetInfo {
+    std::string name;
+    glm::vec3* position;
+    float radius;
 };
 
-
-float bezierTime = 0.0f;
-const float bezierDuration = 20.0f; // duração total para percorrer todas as curvas
-
-
-
-int main(){
-    // criacao da janela
+int main() {
+    float fator = 2.0f;
+    int width = 1080, height = 1080;
     Window window(width, height);
 
-    auto asteroidPositions = generateAsteroidTunnelPositions(asteroidCount, tunnelRadius, tunnelStartZ, tunnelEndZ);
-
     BezierPath cameraPath;
-    // Defina os pontos de controle das curvas Bézier (exemplo para 3 segmentos)
-    cameraPath.addSegment(
-        glm::vec3(0.0f, 0.0f, 100.0f),       // longe, no fundo
-        glm::vec3(0.0f, 2.0f, 60.0f),        // curva descendo devagar
-        glm::vec3(0.0f, 1.0f, 20.0f),        // curva em direção ao sol
-        glm::vec3(0.0f, 0.0f, 5.0f)          // perto do sol
-    );
+    // Se aproxima do sistema solar 3s
+    glm::vec3 p0 = glm::vec3(-10000/fator, 0, -80000);
+    glm::vec3 p1 = glm::vec3(-10000/fator, 0, -54000);
+    glm::vec3 p2 = glm::vec3(-10000/fator, 0, -52000);
+    glm::vec3 p3 = glm::vec3(-10000/fator, 0, -50000);
+    cameraPath.addSegment(p0, p1, p2, p3);
 
-    cameraPath.addSegment(
-        glm::vec3(0.0f, 0.0f, 5.0f),         // começa perto do sol
-        glm::vec3(-0.5f, 0.5f, 2.5f),        // indo em direção ao planeta
-        glm::vec3(-0.5f, 0.2f, 0.5f),        // se aproximando do planeta
-        glm::vec3(-0.5f, 0.0f, 0.0f)         // passa pelo planeta
-    );
+    glm::vec3 p4 = glm::vec3(5000, 0, -40000);     // Começando a virar
+    glm::vec3 p5 = glm::vec3(4500, 0, -30000);     // Se aproxima, ainda distante
+    glm::vec3 p6 = glm::vec3(3000, 0, -25000);     // Entrada anterior
+    cameraPath.addSegment(p3, p4, p5, p6);
 
-    cameraPath.addSegment(
-        glm::vec3(-0.5f, 0.0f, 0.0f),        // sai do planeta
-        glm::vec3(0.0f, -2.0f, -20.0f),      // desce um pouco
-        glm::vec3(0.0f, -1.0f, -40.0f),      // continua indo para trás
-        glm::vec3(0.0f, 0.0f, -60.0f)        // final do trajeto
-    );
+    // Começa a circular (passa pelo planeta 1) 3s
+    glm::vec3 p7 = glm::vec3(-2000, -30, -22500);
+    glm::vec3 p8 = glm::vec3(-8000, -20, -17500);
+    glm::vec3 p9 = glm::vec3(-10000, 0, -12500);
+    cameraPath.addSegment(p6, p7, p8, p9);
+
+    // // //Continua circulando (passa pelo paneta 2) 3s
+    glm::vec3 p10 = glm::vec3(-12000, 10, -10000);
+    glm::vec3 p11 = glm::vec3(-14000, 20, -10000);
+    glm::vec3 p12 = glm::vec3(-15000, 10, -10000);
+    cameraPath.addSegment(p9, p10, p11, p12);
+
+    //dar a volta na terra
+    glm::vec3 p13 = glm::vec3(-16000, 10, -2000);   
+    glm::vec3 p14 = glm::vec3(-18000, 20, -1500);
+    glm::vec3 p15 = glm::vec3(-15000, 10, -2000);
+    cameraPath.addSegment(p12, p13, p14, p15);
+
+    // //Contorna o sol 3s
+    glm::vec3 p16 = glm::vec3(-20000, 0, -2000);
+    glm::vec3 p17 = glm::vec3(-20000, 0, 0);
+    glm::vec3 p18 = glm::vec3(0, 0, 10000);
+
+    cameraPath.addSegment(p15, p16, p17, p18);
+
+    glm::vec3 p19 = glm::vec3(0, 0, 8000);
+    glm::vec3 p20 = glm::vec3(0, 0, 6000);
+    glm::vec3 p21 = glm::vec3(0, 0, 4000);
     
-    Texture asteroidTexture("textures/Ceres.jpg", GL_TEXTURE0);
-    //criacao dos shaders dos planetas e do skybox
+    cameraPath.addSegment(p18, p19, p20, p21);
+
+    glm::vec3 p22 = glm::vec3(0, 0, 2000);
+    glm::vec3 p23 = glm::vec3(0, 0, 1000);
+    glm::vec3 p24 = glm::vec3(0, 0, 200);
+    
+    cameraPath.addSegment(p21, p22, p23, p24);
+
     Shader shaderProgram("shaders/VertexShader.vert", "shaders/PlanetFragShader.frag");
     Shader skyboxShader("shaders/skybox.vert", "shaders/skybox.frag");
 
-
-    // Asteroid tempAsteroid(glm::vec3(0.0f), 10, 10, &asteroidTexture, &shaderProgram, 0);
-
-    // VAO asteroidVAO;
-    // asteroidVAO.Bind();
-
-    // VBO asteroidVBO(tempAsteroid.vertices, tempAsteroid.vertices.size() * sizeof(float));
-    // EBO asteroidEBO(tempAsteroid.indices, tempAsteroid.indices.size() * sizeof(GLuint));
-
-    // asteroidVAO.LinkAttrib(asteroidVBO, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
-    // asteroidVAO.LinkAttrib(asteroidVBO, 1, 2, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    // asteroidVAO.LinkAttrib(asteroidVBO, 2, 3, GL_FLOAT, 8 * sizeof(float), (void*)(5 * sizeof(float)));
-
-    // asteroidVAO.Unbind();
-    // asteroidVBO.Unbind();
-    // asteroidEBO.Unbind();
-
-
-
-
-    // declarar os VAOs e VBOs
     VAO VAO1;
     VAO1.Bind();
 
+    Texture texSun("textures/Sun.jpg", GL_TEXTURE0);
+    Texture texMercury("textures/Ceres.jpg", GL_TEXTURE0);
+    Texture texVenus("textures/Venus.jpg", GL_TEXTURE0);
+    Texture texEarth("textures/Earth.jpg", GL_TEXTURE0);
+    Texture texMoon("textures/Moon.jpg", GL_TEXTURE0);
+    Texture texMars("textures/Mars.jpg", GL_TEXTURE0);
+    Texture texJupiter("textures/Jupiter.jpg", GL_TEXTURE0);
+    // Texture texSaturn("textures/Saturn.jpg", GL_TEXTURE0);
+    // Texture texUranus("textures/Uranus.jpg", GL_TEXTURE0);
+    Texture texNeptune("textures/Nepture.jpg", GL_TEXTURE0);
 
-    // Texture -----------------------------------
-    
-    Texture planetaTexture("textures/Earth.jpg", GL_TEXTURE0);
-    Texture moonTexture("textures/Moon.jpg", GL_TEXTURE0);
-    Texture sunTex("textures/Sun.jpg", GL_TEXTURE0);
+    Planet sun(40, 40, &texSun, &shaderProgram, VAO1.ID); sun.emissiveStrength = 1.0f;
+    Planet mercury(10, 10, &texMercury, &shaderProgram, VAO1.ID);
+    Planet venus(10, 10, &texVenus, &shaderProgram, VAO1.ID);
+    Planet earth(10, 10, &texEarth, &shaderProgram, VAO1.ID);
+    Planet moon(10, 10, &texMoon, &shaderProgram, VAO1.ID);
+    Planet mars(10, 10, &texMars, &shaderProgram, VAO1.ID);
+    Planet jupiter(10, 10, &texJupiter, &shaderProgram, VAO1.ID);
+    // Planet saturn(10, 10, &texSaturn, &shaderProgram, VAO1.ID);
+    // Planet uranus(10, 10, &texUranus, &shaderProgram, VAO1.ID);
+    Planet neptune(10, 10, &texNeptune, &shaderProgram, VAO1.ID);
 
-    
-    // std::vector<Asteroid> asteroids = generateAsteroidsAlongBezier(
-    // cameraPath,           // o caminho Bézier
-    // 50,                   // número de asteroides por segmento
-    // &asteroidTexture,
-    // &shaderProgram,
-    // asteroidVAO.ID
-    // );
+    sun.Scale(glm::vec3(1000.0f));              // Sol: enorme
+    mercury.Scale(glm::vec3(15.0f*4.0f));           // 0.38 * 40
+    venus.Scale(glm::vec3(35.0f*4.0f));             // 0.95 * 40
+    earth.Scale(glm::vec3(800.0f));             // referência
+    moon.Scale(glm::vec3(40.0f));              // 0.27 * 40
+    mars.Scale(glm::vec3(100.0f));              // 0.53 * 40
+    jupiter.Scale(glm::vec3(1200.0f));          // 10.97 * 40
+    neptune.Scale(glm::vec3(1000.0f));          // 3.88 * 40
 
-    Planet planeta(10, 10, &planetaTexture, &shaderProgram, VAO1.ID);
-    Planet moon(10, 10, &moonTexture, &shaderProgram, VAO1.ID);
+    sun.Translate(glm::vec3(0.0f, 0.0f, 0.0f));
+    mercury.Translate(glm::vec3(4500.0f/fator, 15.0f, -2000.0f/fator));
+    venus.Translate(glm::vec3(-5000.0f/fator, 20.0f, -5000.0f/fator));
+    earth.Translate(glm::vec3(-15000, 5.0f, -5000));
+    moon.Translate(glm::vec3(-230.0f/fator, 5.0f, -3080.0f/fator));
+    mars.Translate(glm::vec3(-25000.0f/fator, 0.0f, 20000.0f/fator));
+    jupiter.Translate(glm::vec3(-10000.0f/fator, -10.0f, -50000.0f/fator));
+    neptune.Translate(glm::vec3(-5000, -50.0f, -40000));
 
-    Planet sun(20, 20, &sunTex, &shaderProgram, VAO1.ID);
-    sun.emissiveStrength = 1.0f; // brilha totalmente
+    sun.Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+    mercury.Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+    venus.Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+    mars.Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+    jupiter.Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+    neptune.Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+    earth.Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+    moon.Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
-    VBO VBO1(planeta.vertices, planeta.vertices.size() * sizeof(float));
-    EBO EBO1(planeta.indices, planeta.indices.size() * sizeof(GLuint));
+
+    std::vector<PlanetInfo> planetInfos = {
+        {"Sun", &sun.position, 300.0f},
+        {"Mercury", &mercury.position, 15.0f * 4.0f},
+        {"Venus", &venus.position, 35.0f * 4.0f},
+        {"Earth", &earth.position, 40.0f * 4.0f},
+        {"Moon", &moon.position, 10.0f * 4.0f},
+        {"Mars", &mars.position, 25.0f * 4.0f},
+        {"Jupiter", &jupiter.position, 440.0f},
+        {"Neptune", &neptune.position, 155.0f}
+    };
+
+
+
+    VBO VBO1(earth.vertices, earth.vertices.size() * sizeof(float));
+    EBO EBO1(earth.indices, earth.indices.size() * sizeof(GLuint));
 
     VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
-    VAO1.LinkAttrib(VBO1, 1, 2, GL_FLOAT, 8 * sizeof(float), (void*) (3 * sizeof(float)));
+    VAO1.LinkAttrib(VBO1, 1, 2, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     VAO1.LinkAttrib(VBO1, 2, 3, GL_FLOAT, 8 * sizeof(float), (void*)(5 * sizeof(float)));
-    VAO1.Unbind();
-    VBO1.Unbind();
-    EBO1.Unbind();
-
-    shaderProgram.Activate();
-    shaderProgram.SetInt("tex0", 0);
-
-
 
     VAO VAO2;
     VAO2.Bind();
 
+    std::vector<std::string> faces = {
+        "textures/cubemap/space_bk.png",
+        "textures/cubemap/space_bk.png",
+        "textures/cubemap/space_bk.png",
+        "textures/cubemap/space_bk.png",
+        "textures/cubemap/space_bk.png",
+        "textures/cubemap/space_bk.png"
+    };
     Skybox skybox(faces, &skyboxShader);
     VBO VBO2(skybox.vertices, skybox.vertices.size());
-    // adiciona profundidade, sobreposição de objetos
+
     glEnable(GL_DEPTH_TEST);
 
-    Camera camera(width, height, glm::vec3(0.0f, 0.0f, 250.0f));
-
-    shaderProgram.SetVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-
+    Camera camera(width, height, glm::vec3(3000.0f, 2000.0f, 3000.0f));
+    camera.view = glm::lookAt(camera.Position, sun.position, glm::vec3(0.0f, 1.0f, 0.0f));
     Time time;
-    planeta.Translate(glm::vec3(-0.5f, 0.0f, 0.0f));
-    planeta.Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-    moon.Translate(glm::vec3(1.0f, 0.0f, 0.0f));
-    moon.Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-    sun.Translate(glm::vec3(0.0f, 0.0f, 5.0f));
-    sun.Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
+    // Ângulos separados para cada planeta
+    float mercuryAngle = 45.0f;
+    float venusAngle = 20.0f;
+    float earthAngle = 35.0f;
+    float moonAngle = 0.0f;
+    float marsAngle = 75.0f;
+    float jupiterAngle = 70.0f;
+    float neptuneAngle = 66.0f;
 
-    sun.Scale(glm::vec3(100.0f, 100.0f, 100.0f));
-    moon.Scale(glm::vec3(0.5f, 0.5f, 0.5f));
-    planeta.Scale(glm::vec3(3.0f, 3.0f, 3.0f));
+    float elapsedTime = 0.0f;
+    float travelTime = 15.0f;
+    bool cameraLocked = true;
 
-    float moonOrbitAngle = 0.0f;
-    float planetOrbitAngle = 0.0f;
-
-
-    float bezierTime = 0.0f;
-    const float bezierDuration = 10.0f; // segundos que dura o movimento da câmera na curva
-
-    // While principal onde a mágica acontece -----------------------------------------
     while (!glfwWindowShouldClose(window.window)) {
         time.Update();
-        // Limpa a tela com cor de fundo e depth buffer
+        elapsedTime += time.deltaTime;
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-        // Ativa o shader
         shaderProgram.Activate();
-        glm::vec3 sunWorldPos = glm::vec3(sun.model[3]);
-
-        // Envia a posição da luz e a posição da câmera para o shader
-        shaderProgram.SetVec3("lightPos", sunWorldPos);
+        shaderProgram.SetVec3("lightPos", glm::vec3(sun.model[3]));
         shaderProgram.SetVec3("viewPos", camera.Position);
 
-        camera.Inputs(window.window);
-        camera.Matrix(45.0f, 0.1f, 300.0f, shaderProgram, "camMatrix");
-        VAO1.Bind();
+        float t = glm::clamp(elapsedTime / travelTime, 0.0f, 1.0f);
+        glm::vec3 currentPosition = cameraPath.evaluate(t);
+        if (cameraLocked) {
+            glm::vec3 currentPosition = cameraPath.evaluate(t);
+            camera.Position = currentPosition;
 
-        //a cada 1 segundo vc rotaciona x.0f graus. Top demais, né?!!!
-        planeta.Translate(glm::vec3(0.0f, 0.0f, -0.01f * time.deltaTime));
-        moon.OrbitAround(planeta.position, 1.5f, 5.0f, time.deltaTime*1.5, moonOrbitAngle);
-        planeta.OrbitAround(sun.position, 150.0f, 5.0f, time.deltaTime, planetOrbitAngle);
+            glm::vec3 target;
 
-        planeta.Rotate(-45.0f * time.deltaTime, glm::vec3(0.0f, 0.0f, 1.0f));
-        sun.Rotate(-10.0f * time.deltaTime, glm::vec3(0.0f, 0.0f, 1.0f));
-        moon.Rotate(-45.0f * time.deltaTime, glm::vec3(0.0f, 0.0f, 1.0f));
+            // Determina para onde olhar com base no segmento atual
+            if (t < 1.0f / 6.0f) {
+                target = jupiter.position;  // 1º segmento
+            } else if (t < 5.0f / 6.0f) {
+                target = earth.position;    // do 2º ao penúltimo segmento
+            } else {
+                target = sun.position;      // último segmento
+            }
+
+            camera.SmoothLookAt(target - currentPosition, 0.1f);
+
+            if (elapsedTime >= travelTime) {
+                cameraLocked = false;
+                // Ajuste final da câmera ao fim da animação
+                camera.view = glm::lookAt(camera.Position, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+            }
+        }
         
+        camera.Matrix(45.0f, 0.1f, 70000.0f, shaderProgram, "camMatrix");
+        
+        // 🌙 LUA
+        moon.OrbitAround(earth.position, 6.0f, 300.0f, time.deltaTime, moonAngle);
 
+        // 🌐 ROTAÇÕES PRÓPRIAS
+        sun.Rotate(-3.0f * time.deltaTime, glm::vec3(0, 0, 1));
+        earth.Rotate(-5.0f * time.deltaTime, glm::vec3(0, 0, 1));
+        jupiter.Rotate(-8.0f * time.deltaTime, glm::vec3(0, 0, 1));
+        neptune.Rotate(-5.0f * time.deltaTime, glm::vec3(0, 0, 1));
+        mercury.Rotate(-4.0f * time.deltaTime, glm::vec3(0, 0, 1));
+        neptune.Rotate(-5.0f * time.deltaTime, glm::vec3(0, 0, 1));
 
         VAO1.Bind();
-        planeta.Render();
-        moon.Render();
         sun.Render();
-        VAO1.Unbind();
+        mercury.Render();
+        venus.Render();
+        earth.Render();
+        moon.Render();
+        mars.Render();
+        jupiter.Render();
+        // saturn.Render();
+        // uranus.Render();
+        neptune.Render();
         VAO1.Unbind();
 
-        // Renderiza o skybox primeiro
         skybox.Render(camera.view, camera.projection);
-        
-        // Troca os buffers e processa eventos
+
         glfwSwapBuffers(window.window);
         glfwPollEvents();
     }
-
-
 
     VAO1.Delete();
     EBO1.Delete();
