@@ -20,7 +20,7 @@ public:
 
     glm::vec3 evaluate(int segmentIndex, float t);
 
-    // Gera pontos para debug visual (ex: para desenhar linhas)
+    // Gera pontos para debug visual
     std::vector<glm::vec3> getDebugPoints(int samplesPerSegment = 100);
 
     int getSegmentCount() const { return segments.size(); }

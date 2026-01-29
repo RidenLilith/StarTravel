@@ -14,13 +14,13 @@ Planet::Planet(int stacks, int sectors, Texture* tex, Shader* sha, GLuint ID)
 
     for (int i = 0; i <= stacks; ++i)
     {
-        float stackAngle = PI / 2 - i * PI / stacks; // de +pi/2 a -pi/2
-        float xy = radius * cosf(stackAngle);        // raio do círculo atual
-        float z = radius * sinf(stackAngle);         // altura
+        float stackAngle = PI / 2 - i * PI / stacks; 
+        float xy = radius * cosf(stackAngle);        
+        float z = radius * sinf(stackAngle);         
 
         for (int j = 0; j <= sectors; ++j)
         {
-            float sectorAngle = j * 2 * PI / sectors; // de 0 a 2pi
+            float sectorAngle = j * 2 * PI / sectors; 
 
             float x = xy * cosf(sectorAngle);
             float y = xy * sinf(sectorAngle);
@@ -36,7 +36,7 @@ Planet::Planet(int stacks, int sectors, Texture* tex, Shader* sha, GLuint ID)
             vertices.push_back(u);
             vertices.push_back(v);
 
-            // Normal (normalizada)
+            // Normal 
             glm::vec3 normal = glm::normalize(glm::vec3(x, y, z));
             vertices.push_back(normal.x);
             vertices.push_back(normal.y);
@@ -67,7 +67,7 @@ Planet::Planet(int stacks, int sectors, Texture* tex, Shader* sha, GLuint ID)
 void Planet::Translate(glm::vec3 offset)
 {
     position = offset;
-    model = glm::mat4(1.0f); // limpa transformações anteriores
+    model = glm::mat4(1.0f); 
     model = glm::translate(model, position);
     model = model * rotation;
     model = glm::scale(model, currentScale);
@@ -78,7 +78,6 @@ void Planet::Rotate(float angle, glm::vec3 axis)
 {
     rotation = glm::rotate(rotation, glm::radians(angle), axis);
 
-    // Recalcular model matrix
     model = glm::mat4(1.0f);
     model = glm::translate(model, position);
     model = model * rotation;
@@ -105,7 +104,7 @@ void Planet::Render()
     glUniform1f(emissiveLoc, emissiveStrength);
 
     GLuint lightColorLoc = glGetUniformLocation(shader->ID, "lightColor");
-    glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); // branco padrão
+    glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); 
 
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }
@@ -120,7 +119,7 @@ void Planet::OrbitAround(glm::vec3 center, float radius, float speed, float delt
     float z = center.z + radius * sin(rad);
     float y = center.y;
 
-    position = glm::vec3(x, y, z); // sempre atualizar
+    position = glm::vec3(x, y, z);
 
     model = glm::mat4(1.0f);
     model = glm::translate(model, position);

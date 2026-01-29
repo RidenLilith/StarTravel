@@ -10,7 +10,7 @@ glm::vec3 BezierPath::evaluate(int segmentIndex, float t) {
         return glm::vec3(0.0f);
 
     const BezierSegment& seg = segments[segmentIndex];
-    t = glm::clamp(t, 0.0f, 1.0f); // Adiciona clamping de segurança
+    t = glm::clamp(t, 0.0f, 1.0f); //clamping para maior segurança (bugfix)
 
     float u = 1.0f - t;
     float tt = t * t;

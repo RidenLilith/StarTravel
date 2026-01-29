@@ -62,5 +62,6 @@
         "xutility": "cpp",
         "random": "cpp"
     },
-    "C_Cpp.errorSquiggles": "disabled"
+    "C_Cpp.errorSquiggles": "disabled",
+    "cmake.sourceDirectory": "D:/StarTravel/include/glm"
 }

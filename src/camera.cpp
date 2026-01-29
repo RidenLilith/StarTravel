@@ -55,7 +55,7 @@ void Camera::Inputs(GLFWwindow* window)
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 
-    // Novo trecho: imprime posição da câmera quando a barra de espaço é pressionada
+    // imprime posição da câmera quando a barra de espaço é pressionada (para debug)
     static bool spaceWasPressed = false;
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
     {

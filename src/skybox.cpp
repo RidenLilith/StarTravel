@@ -13,7 +13,7 @@ Skybox::Skybox(const std::vector<std::string>& faces, Shader* skyboxShader)
     }
 
     float skyboxVertices[] = {
-        // positions
+    
         -1.0f,  1.0f, -1.0f,
         -1.0f, -1.0f, -1.0f,
          1.0f, -1.0f, -1.0f,

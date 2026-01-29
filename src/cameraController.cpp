@@ -24,7 +24,7 @@ int CameraController::getCurrentSegment(float elapsedTime) const {
             return i;
         time += segmentDurations[i];
     }
-    return segmentDurations.size() - 1;  // Último
+    return segmentDurations.size() - 1;  // Último (oh dureza)
 }
 
 float CameraController::getLocalT(float elapsedTime) const {

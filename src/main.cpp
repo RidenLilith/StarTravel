@@ -22,8 +22,6 @@
 #include "bezierPath.h"
 #include "billBoard.h"
 #include "cameraController.h"
-#include <windows.h>
-#include <mmsystem.h>
 
 
 
@@ -42,6 +40,7 @@ int main() {
 
     BezierPath cameraPath;
     CameraController pathController;
+    
     // Netuno
     glm::vec3 p0 = glm::vec3(-10000/fator, 0, -80000);
     glm::vec3 p1 = glm::vec3(-10000/fator, 0, -54000);
@@ -49,10 +48,11 @@ int main() {
     glm::vec3 p3 = glm::vec3(-10000/fator, 0, -50000);
     cameraPath.addSegment(p0, p1, p2, p3);
     pathController.addSegmentDuration(5.0f);
+
     //Jupiter
-    glm::vec3 p4 = glm::vec3(5000, 0, -40000);     // Começando a virar
-    glm::vec3 p5 = glm::vec3(4500, 0, -30000);     // Se aproxima, ainda distante
-    glm::vec3 p6 = glm::vec3(1000, 0, -25000);     // Entrada anterior
+    glm::vec3 p4 = glm::vec3(5000, 0, -40000);     
+    glm::vec3 p5 = glm::vec3(4500, 0, -30000);     
+    glm::vec3 p6 = glm::vec3(1000, 0, -25000);     
     cameraPath.addSegment(p3, p4, p5, p6);
     pathController.addSegmentDuration(5.0f);
 
@@ -63,7 +63,7 @@ int main() {
     cameraPath.addSegment(p6, p7, p8, p9);
     pathController.addSegmentDuration(5.0f);
 
-    // (terra, por tras)
+    // (terra por tras)
     glm::vec3 p10 = glm::vec3(-12000, 10, -10000);
     glm::vec3 p11 = glm::vec3(-16000, 20, -10000);
     glm::vec3 p12 = glm::vec3(-17000, 10, -10000);
@@ -111,9 +111,9 @@ int main() {
     Texture texEACH("textures/imagemEACH.png", GL_TEXTURE0);
     float billboardScale = 100.0f;
     float spacing = 150.0f;
-    float distanceInFront = -150.0f;  // mais negativo que o centro da cena (Z = 0)
+    float distanceInFront = -150.0f;  
 
-    // Quad para billboards
+
     std::vector<float> quadVertices = {
         -1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
         -1.0f, -1.0f, 0.0f,  0.0f, 0.0f,
@@ -129,8 +129,6 @@ int main() {
     VAO_billboard.LinkAttrib(quadVBO, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
     VAO_billboard.LinkAttrib(quadVBO, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
-    Billboard billboardPedro(glm::vec3(-spacing, 0.0f, distanceInFront), glm::vec3(25), &texPedro, &billboardShader, VAO_billboard.ID);
-    Billboard billboardBreno(glm::vec3(spacing,      0.0f, distanceInFront), glm::vec3(25), &texBreno, &billboardShader, VAO_billboard.ID);
     Billboard billboardEACH(glm::vec3(0.0f,    0.0f, -120), glm::vec3(75), &texEACH, &billboardShader, VAO_billboard.ID);
     VAO_billboard.Unbind();
 
@@ -141,8 +139,6 @@ int main() {
     Texture texMoon("textures/Moon.jpg", GL_TEXTURE0);
     Texture texMars("textures/Mars.jpg", GL_TEXTURE0);
     Texture texJupiter("textures/Jupiter.jpg", GL_TEXTURE0);
-    // Texture texSaturn("textures/Saturn.jpg", GL_TEXTURE0);
-    // Texture texUranus("textures/Uranus.jpg", GL_TEXTURE0);
     Texture texNeptune("textures/Nepture.jpg", GL_TEXTURE0);
 
     VAO1.Bind();
@@ -154,18 +150,16 @@ int main() {
     Planet moon(10, 10, &texMoon, &shaderProgram, VAO1.ID);
     Planet mars(10, 10, &texMars, &shaderProgram, VAO1.ID);
     Planet jupiter(10, 10, &texJupiter, &shaderProgram, VAO1.ID);
-    // Planet saturn(10, 10, &texSaturn, &shaderProgram, VAO1.ID);
-    // Planet uranus(10, 10, &texUranus, &shaderProgram, VAO1.ID);
     Planet neptune(10, 10, &texNeptune, &shaderProgram, VAO1.ID);
 
-    sun.Scale(glm::vec3(1000.0f));              // Sol: enorme
-    mercury.Scale(glm::vec3(15.0f*4.0f));           // 0.38 * 40
-    venus.Scale(glm::vec3(35.0f*4.0f));             // 0.95 * 40
-    earth.Scale(glm::vec3(800.0f));             // referência
-    moon.Scale(glm::vec3(200.0f));              // 0.27 * 40
-    mars.Scale(glm::vec3(100.0f));              // 0.53 * 40
-    jupiter.Scale(glm::vec3(1200.0f));          // 10.97 * 40
-    neptune.Scale(glm::vec3(1000.0f));          // 3.88 * 40
+    sun.Scale(glm::vec3(1000.0f));              
+    mercury.Scale(glm::vec3(15.0f*4.0f));           
+    venus.Scale(glm::vec3(35.0f*4.0f));             
+    earth.Scale(glm::vec3(800.0f));             
+    moon.Scale(glm::vec3(200.0f));              
+    mars.Scale(glm::vec3(100.0f));              
+    jupiter.Scale(glm::vec3(1200.0f));          
+    neptune.Scale(glm::vec3(1000.0f));          
 
     sun.Translate(glm::vec3(0.0f, 0.0f, 0.0f));
     mercury.Translate(glm::vec3(4500.0f/fator, 15.0f, -2000.0f/fator));
@@ -187,13 +181,13 @@ int main() {
 
 
     std::vector<glm::vec3*> cameraTargets = {
-        &neptune.position, // Segmento 0
-        &jupiter.position,   // Segmento 1
-        &earth.position,   // Segmento 2
-        &earth.position,   // Segmento 3
-        &earth.position,     // Segmento 4
-        &earth.position,     // Segmento 5
-        &sun.position      // Segmento 6
+        &neptune.position, 
+        &jupiter.position,   
+        &earth.position,   
+        &earth.position,   
+        &earth.position,     
+        &earth.position,     
+        &sun.position      
     };
 
 
@@ -225,30 +219,16 @@ int main() {
     camera.view = glm::lookAt(camera.Position, sun.position, glm::vec3(0.0f, 1.0f, 0.0f));
     Time time;
 
-    // Ângulos separados para cada planeta
-    float mercuryAngle = 45.0f;
-    float venusAngle = 20.0f;
-    float earthAngle = 35.0f;
     float moonAngle = 0.0f;
-    float marsAngle = 75.0f;
-    float jupiterAngle = 70.0f;
-    float neptuneAngle = 66.0f;
 
     float elapsedTime = 0.0f;
     float travelTime = 15.0f;
     bool cameraLocked = true;
 
-    PlaySound(TEXT("sounds/interestelar.wav"), NULL, SND_FILENAME | SND_ASYNC);
-    bool finalSoundPlayed = false;
-
     while (!glfwWindowShouldClose(window.window)) {
         time.Update();
         elapsedTime += time.deltaTime;
         float timeRemaining = pathController.getTotalTime() - elapsedTime;
-        if (!finalSoundPlayed && timeRemaining <= 2.0f) {
-            PlaySound(TEXT("sounds/finalizacao.wav"), NULL, SND_FILENAME | SND_ASYNC);
-            finalSoundPlayed = true;
-        }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -279,19 +259,16 @@ int main() {
 
         camera.Matrix(45.0f, 0.1f, 70000.0f, shaderProgram, "camMatrix");
 
-        // 
+        // Funcao para girar a lua em torno da terra
         moon.OrbitAround(earth.position, 1500.0f, 50.0f, time.deltaTime, moonAngle);
 
-        // 
+        // Rotacionar os planetas em torno do proprio eixo
         sun.Rotate(-3.0f * time.deltaTime, glm::vec3(0, 0, 1));
         earth.Rotate(-20.0f * time.deltaTime, glm::vec3(0, 0, 1));
         jupiter.Rotate(-8.0f * time.deltaTime, glm::vec3(0, 0, 1));
         neptune.Rotate(-5.0f * time.deltaTime, glm::vec3(0, 0, 1));
         mercury.Rotate(-4.0f * time.deltaTime, glm::vec3(0, 0, 1));
 
-        billboardPedro.Rotate(45.0f * time.deltaTime, glm::vec3(0, 1, 0));
-        billboardBreno.Rotate(45.0f * time.deltaTime, glm::vec3(0, 1, 0));
-        // billboardEACH.Rotate(10.0f * time.deltaTime, glm::vec3(0, 1, 0));
 
         VAO1.Bind();
         sun.Render();
@@ -307,8 +284,8 @@ int main() {
         billboardShader.Activate();
         VAO_billboard.Bind();
         camera.Matrix(45.0f, 0.1f, 70000.0f, billboardShader, "camMatrix");
-        billboardPedro.Render();
-        billboardBreno.Render();
+        // billboardPedro.Render();
+        // billboardBreno.Render();
         billboardEACH.Render();
         VAO_billboard.Unbind();
 

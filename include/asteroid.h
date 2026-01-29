@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include "ShaderClass.h"
 #include "Texture.h"
-#include "planet.h"  // ← importante para herdar de Planet
+#include "planet.h" 
 
 class Asteroid : public Planet {
 public:
