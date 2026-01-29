@@ -3,10 +3,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <random>
 #include "ShaderClass.h"
 #include "VAO.h"
 #include "VBO.h"
@@ -24,13 +20,65 @@
 #include "cameraController.h"
 
 
+void setupCameraPath(BezierPath *path, CameraController *controller, float fator){
+    glm::vec3 p0 = glm::vec3(-10000/fator, 0, -80000);
+    glm::vec3 p1 = glm::vec3(-10000/fator, 0, -54000);
+    glm::vec3 p2 = glm::vec3(-10000/fator, 0, -52000);
+    glm::vec3 p3 = glm::vec3(-10000/fator, 0, -50000);
+    path->addSegment(p0, p1, p2, p3);
+    controller->addSegmentDuration(5.0f);
 
+    //Jupiter
+    glm::vec3 p4 = glm::vec3(5000, 0, -40000);     
+    glm::vec3 p5 = glm::vec3(4500, 0, -30000);     
+    glm::vec3 p6 = glm::vec3(1000, 0, -25000);     
+    path->addSegment(p3, p4, p5, p6);
+    controller->addSegmentDuration(5.0f);
 
-struct PlanetInfo {
-    std::string name;
-    glm::vec3* position;
-    float radius;
-};
+    // Terra(aproximando)
+    glm::vec3 p7 = glm::vec3(-2000, -30, -22500);
+    glm::vec3 p8 = glm::vec3(-8000, -20, -17500);
+    glm::vec3 p9 = glm::vec3(-10000, 0, -12500);
+    path->addSegment(p6, p7, p8, p9);
+    controller->addSegmentDuration(5.0f);
+
+    // (terra por tras)
+    glm::vec3 p10 = glm::vec3(-12000, 10, -10000);
+    glm::vec3 p11 = glm::vec3(-16000, 20, -10000);
+    glm::vec3 p12 = glm::vec3(-17000, 10, -10000);
+    path->addSegment(p9, p10, p11, p12);
+    controller->addSegmentDuration(2.0f);
+
+    //terra: da a volta e se afasta
+    glm::vec3 p13 = glm::vec3(-16000, 10, -2000);   
+    glm::vec3 p14 = glm::vec3(-18000, 20, -1500);
+    glm::vec3 p15 = glm::vec3(-15000, 10, -2000);
+    path->addSegment(p12, p13, p14, p15);
+    controller->addSegmentDuration(4.0f);
+
+    // vira pro sol
+    glm::vec3 p16 = glm::vec3(-15000, 0, -2000);
+    glm::vec3 p17 = glm::vec3(-15000, 0, 0);
+    glm::vec3 p18 = glm::vec3(0, 0, 10000);
+    controller->addSegmentDuration(3.0f);
+
+    path->addSegment(p15, p16, p17, p18);
+
+    glm::vec3 p19 = glm::vec3(0, 0, 8000);
+    glm::vec3 p20 = glm::vec3(0, 0, 6000);
+    glm::vec3 p21 = glm::vec3(0, 0, 4000);
+    controller->addSegmentDuration(6.0f);
+    
+    path->addSegment(p18, p19, p20, p21);
+    // Se aproxima lentamente
+    glm::vec3 p22 = glm::vec3(0, 0, 2000);
+    glm::vec3 p23 = glm::vec3(0, 0, 1000);
+    glm::vec3 p24 = glm::vec3(0, 0, 300);
+    controller->addSegmentDuration(6.0f);
+    
+    path->addSegment(p21, p22, p23, p24);
+}
+
 
 int main() {
     // sf::Music music;
@@ -41,63 +89,8 @@ int main() {
     BezierPath cameraPath;
     CameraController pathController;
     
-    // Netuno
-    glm::vec3 p0 = glm::vec3(-10000/fator, 0, -80000);
-    glm::vec3 p1 = glm::vec3(-10000/fator, 0, -54000);
-    glm::vec3 p2 = glm::vec3(-10000/fator, 0, -52000);
-    glm::vec3 p3 = glm::vec3(-10000/fator, 0, -50000);
-    cameraPath.addSegment(p0, p1, p2, p3);
-    pathController.addSegmentDuration(5.0f);
-
-    //Jupiter
-    glm::vec3 p4 = glm::vec3(5000, 0, -40000);     
-    glm::vec3 p5 = glm::vec3(4500, 0, -30000);     
-    glm::vec3 p6 = glm::vec3(1000, 0, -25000);     
-    cameraPath.addSegment(p3, p4, p5, p6);
-    pathController.addSegmentDuration(5.0f);
-
-    // Terra(aproximando)
-    glm::vec3 p7 = glm::vec3(-2000, -30, -22500);
-    glm::vec3 p8 = glm::vec3(-8000, -20, -17500);
-    glm::vec3 p9 = glm::vec3(-10000, 0, -12500);
-    cameraPath.addSegment(p6, p7, p8, p9);
-    pathController.addSegmentDuration(5.0f);
-
-    // (terra por tras)
-    glm::vec3 p10 = glm::vec3(-12000, 10, -10000);
-    glm::vec3 p11 = glm::vec3(-16000, 20, -10000);
-    glm::vec3 p12 = glm::vec3(-17000, 10, -10000);
-    cameraPath.addSegment(p9, p10, p11, p12);
-    pathController.addSegmentDuration(2.0f);
-
-    //terra: da a volta e se afasta
-    glm::vec3 p13 = glm::vec3(-16000, 10, -2000);   
-    glm::vec3 p14 = glm::vec3(-18000, 20, -1500);
-    glm::vec3 p15 = glm::vec3(-15000, 10, -2000);
-    cameraPath.addSegment(p12, p13, p14, p15);
-    pathController.addSegmentDuration(4.0f);
-
-    // vira pro sol
-    glm::vec3 p16 = glm::vec3(-15000, 0, -2000);
-    glm::vec3 p17 = glm::vec3(-15000, 0, 0);
-    glm::vec3 p18 = glm::vec3(0, 0, 10000);
-    pathController.addSegmentDuration(3.0f);
-
-    cameraPath.addSegment(p15, p16, p17, p18);
-
-    glm::vec3 p19 = glm::vec3(0, 0, 8000);
-    glm::vec3 p20 = glm::vec3(0, 0, 6000);
-    glm::vec3 p21 = glm::vec3(0, 0, 4000);
-    pathController.addSegmentDuration(6.0f);
-    
-    cameraPath.addSegment(p18, p19, p20, p21);
-    // Se aproxima lentamente
-    glm::vec3 p22 = glm::vec3(0, 0, 2000);
-    glm::vec3 p23 = glm::vec3(0, 0, 1000);
-    glm::vec3 p24 = glm::vec3(0, 0, 300);
-    pathController.addSegmentDuration(6.0f);
-    
-    cameraPath.addSegment(p21, p22, p23, p24);
+    // Fazer o setup do caminho a ser seguido pela câmera.
+    setupCameraPath(&cameraPath, &pathController, fator);
 
     Shader billboardShader("shaders/image.vert", "shaders/image.frag");
     Shader shaderProgram("shaders/VertexShader.vert", "shaders/PlanetFragShader.frag");
@@ -106,14 +99,7 @@ int main() {
     VAO VAO1;
     VAO1.Bind();
 
-    Texture texPedro("textures/imagemPedro.png", GL_TEXTURE0);
-    Texture texBreno("textures/imagemBreno.png", GL_TEXTURE0);
     Texture texEACH("textures/imagemEACH.png", GL_TEXTURE0);
-    float billboardScale = 100.0f;
-    float spacing = 150.0f;
-    float distanceInFront = -150.0f;  
-
-
     std::vector<float> quadVertices = {
         -1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
         -1.0f, -1.0f, 0.0f,  0.0f, 0.0f,
@@ -199,9 +185,6 @@ int main() {
     VAO1.LinkAttrib(VBO1, 1, 2, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     VAO1.LinkAttrib(VBO1, 2, 3, GL_FLOAT, 8 * sizeof(float), (void*)(5 * sizeof(float)));
 
-    VAO VAO2;
-    VAO2.Bind();
-
     std::vector<std::string> faces = {
         "textures/cubemap/space_bk.png",
         "textures/cubemap/space_bk.png",
@@ -211,8 +194,6 @@ int main() {
         "textures/cubemap/space_bk.png"
     };
     Skybox skybox(faces, &skyboxShader);
-    VBO VBO2(skybox.vertices, skybox.vertices.size());
-
     glEnable(GL_DEPTH_TEST);
 
     Camera camera(width, height, glm::vec3(3000.0f, 2000.0f, 3000.0f));
@@ -222,14 +203,11 @@ int main() {
     float moonAngle = 0.0f;
 
     float elapsedTime = 0.0f;
-    float travelTime = 15.0f;
     bool cameraLocked = true;
 
     while (!glfwWindowShouldClose(window.window)) {
         time.Update();
         elapsedTime += time.deltaTime;
-        float timeRemaining = pathController.getTotalTime() - elapsedTime;
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
@@ -245,7 +223,6 @@ int main() {
             glm::vec3 currentPosition = cameraPath.evaluate(currentSegment, localT);
             camera.Position = currentPosition;
 
-            glm::vec3 target;
             if (currentSegment < cameraTargets.size()) {
                 glm::vec3* target = cameraTargets[currentSegment];
                 camera.SmoothLookAt(*target - currentPosition, 0.1f);
@@ -284,8 +261,6 @@ int main() {
         billboardShader.Activate();
         VAO_billboard.Bind();
         camera.Matrix(45.0f, 0.1f, 70000.0f, billboardShader, "camMatrix");
-        // billboardPedro.Render();
-        // billboardBreno.Render();
         billboardEACH.Render();
         VAO_billboard.Unbind();
 
